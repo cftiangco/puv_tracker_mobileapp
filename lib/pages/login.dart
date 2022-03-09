@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:puv_tracker/pages/home_driver.dart';
+import 'package:puv_tracker/pages/register.dart';
 import 'package:puv_tracker/services/pref_service.dart';
 
 import '../widgets/PUV_Button.dart';
@@ -18,6 +19,23 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   TextEditingController usernameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+
+  var id = 0;
+  var type = 0;
+
+  void getIdAndType() async {
+    PrefService _pref = new PrefService();
+    this.id = await _pref.readId() ?? 0;
+    this.type = await _pref.readType() ?? 0;
+    if (this.id > 0 && this.type > 0) {
+      setState(() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeDriver()),
+        );
+      });
+    }
+  }
 
   final url = "http://puvtrackingsystem.xyz/api/login";
 
@@ -37,6 +55,7 @@ class _Login extends State<Login> {
               '${result['data']['last_name']},${result['data']['first_name']} ${result['data']['middle_name']}');
           int id = int.parse(result['data']['id'].toString());
           await _pref.saveId(id);
+          await _pref.saveType(result['type']);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomeDriver()),
@@ -49,6 +68,12 @@ class _Login extends State<Login> {
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  void initState() {
+    this.getIdAndType();
+    super.initState();
   }
 
   @override
@@ -78,6 +103,7 @@ class _Login extends State<Login> {
             ),
             SizedBox(height: 10.0),
             PUVTextField(
+              obscureText: true,
               hint: 'Password',
               controller: this.passwordController,
             ),
@@ -88,11 +114,16 @@ class _Login extends State<Login> {
             ),
             TextButton(
               onPressed: () => print('register account page'),
-              child: Text(
-                'Register Account',
-                style: TextStyle(
-                  fontSize: 12.0,
-                ),
+              child: TextButton(
+                child: Text('Register New Account'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Register(),
+                    ),
+                  );
+                },
               ),
             ),
           ],

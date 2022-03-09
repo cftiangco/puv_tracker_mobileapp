@@ -56,20 +56,25 @@ class _HomeDriver extends State<HomeDriver> {
   }
 
   Future<void> getPassengers() async {
-    var res = await http.get(
-      Uri.parse('http://puvtrackingsystem.xyz/api/trips/${this.id}/active'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
-      },
-    );
-    setState(() {
+    try {
+      var res = await http.get(
+        Uri.parse('http://puvtrackingsystem.xyz/api/trips/${this.id}/active'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
+        },
+      );
       this.passengers = jsonDecode(res.body);
-      if (this.passengers['data'] != null) {
-        this.isAccepting = true;
-      }
-    });
+      setState(() {
+        if (this.passengers['data']?.length > 0) {
+          this.isAccepting = true;
+        }
+      });
+      print(this.passengers);
+    } catch (e) {
+      print(e);
+    }
   }
 
   void acceptPassengers(slotId) async {
@@ -155,6 +160,7 @@ class _HomeDriver extends State<HomeDriver> {
     this.getToken();
     this.getId();
     this.getData();
+    this.getPassengers();
     super.initState();
   }
 
@@ -168,7 +174,7 @@ class _HomeDriver extends State<HomeDriver> {
       body: isAccepting == true
           ? Passengers(
               dropButton: (id) => {this.dropPassenger(id)},
-              passengers: this.passengers,
+              passengers: this.passengers['data'],
               endTrip: this.handleEndTrip,
             )
           : SchedulesButton(

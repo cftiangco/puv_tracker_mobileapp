@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:puv_tracker/widgets/PassengerCard.dart';
+import 'package:puv_tracker/widgets/passenger_card.dart';
 
 class Passengers extends StatefulWidget {
   const Passengers({
@@ -77,22 +77,18 @@ class _PassengersState extends State<Passengers> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: widget.passengers['data'].length,
+              itemCount: widget.passengers?.length ?? 0,
               itemBuilder: (context, index) {
                 return PassengerCard(
-                  statusId: widget.passengers['data'][index]['status_id'] ?? 0,
-                  onPress: () => widget
-                      .dropButton(widget.passengers['data'][index]['id'] ?? 0),
-                  fullName:
-                      widget.passengers['data'][index]['full_name'].toString(),
+                  statusId: widget.passengers[index]['status_id'] ?? 0,
+                  onPress: () =>
+                      widget.dropButton(widget.passengers?[index]['id'] ?? 0),
+                  fullName: widget.passengers[index]['full_name'].toString(),
                   typeName:
-                      widget.passengers['data'][index]['type']?.toString() ??
-                          'Regular',
-                  location:
-                      widget.passengers['data'][index]['location'].toString(),
-                  fee: widget.passengers['data'][index]['fee'].toString(),
-                  arrived:
-                      widget.passengers['data'][index]['arrived'].toString(),
+                      widget.passengers[index]['type']?.toString() ?? 'Regular',
+                  location: widget.passengers[index]['location'].toString(),
+                  fee: widget.passengers?[index]['fee'].toString(),
+                  arrived: widget.passengers[index]['arrived'].toString(),
                 );
               },
             ),

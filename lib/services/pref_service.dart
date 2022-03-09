@@ -43,4 +43,14 @@ class PrefService {
     await _preferences.remove('id');
     await _preferences.clear();
   }
+
+  Future saveType(int value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    await _preferences.setInt('type', value);
+  }
+
+  Future readType() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    return await _preferences.getInt('type');
+  }
 }
