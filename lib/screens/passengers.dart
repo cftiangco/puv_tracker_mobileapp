@@ -7,10 +7,12 @@ class Passengers extends StatefulWidget {
     required this.passengers,
     required this.dropButton,
     required this.endTrip,
+    required this.handleDrive,
   }) : super(key: key);
   final passengers;
   final dropButton;
   final endTrip;
+  final handleDrive;
   @override
   _PassengersState createState() => _PassengersState();
 }
@@ -43,32 +45,66 @@ class _PassengersState extends State<Passengers> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Total Earning: P535'),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Confirmation'),
-                            content: Text(
-                              'Are you sure you want to end this Trip Now?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  this.widget.endTrip();
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Yes'),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                  'Are you sure you want to end this Trip Now?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      this.widget.endTrip();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Yes'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('No'),
+                                  ),
+                                ],
                               ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text('No'),
+                            );
+                          },
+                          child: Text('End Trip'),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                  'Are you sure you want to drive now?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      this.widget.handleDrive();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Yes'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('No'),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: Text('End Trip'),
+                            );
+                          },
+                          child: Text('Drive'),
+                        ),
+                      ],
                     ),
                   ],
                 )

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:puv_tracker/pages/home_driver.dart';
+import 'package:puv_tracker/pages/home_passenger.dart';
 import 'package:puv_tracker/pages/register.dart';
 import 'package:puv_tracker/services/pref_service.dart';
 
@@ -22,16 +23,26 @@ class _Login extends State<Login> {
 
   var id = 0;
   var type = 0;
+  var isIncorrect = false;
 
   void getIdAndType() async {
     PrefService _pref = new PrefService();
     this.id = await _pref.readId() ?? 0;
     this.type = await _pref.readType() ?? 0;
     if (this.id > 0 && this.type > 0) {
+      if (type == 2) {
+        setState(() {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeDriver()),
+          );
+        });
+        return;
+      }
       setState(() {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomeDriver()),
+          MaterialPageRoute(builder: (context) => HomePassenger()),
         );
       });
     }
@@ -40,6 +51,7 @@ class _Login extends State<Login> {
   final url = "http://puvtrackingsystem.xyz/api/login";
 
   void handleLogin() async {
+    isIncorrect = false;
     PrefService _pref = new PrefService();
     try {
       final res = await post(Uri.parse(url), body: {
@@ -48,26 +60,39 @@ class _Login extends State<Login> {
       });
 
       var result = jsonDecode(res.body);
+      print(result);
       if (result['success'] == true) {
+        await _pref.saveToken(result['token']);
+        await _pref.saveFullName(
+            '${result['data']['last_name']},${result['data']['first_name']} ${result['data']['middle_name']}');
+        int id = int.parse(result['data']['id'].toString());
+        await _pref.saveId(id);
+        await _pref.saveType(result['type']);
         if (result['type'] == 2) {
-          await _pref.saveToken(result['token']);
-          await _pref.saveFullName(
-              '${result['data']['last_name']},${result['data']['first_name']} ${result['data']['middle_name']}');
-          int id = int.parse(result['data']['id'].toString());
-          await _pref.saveId(id);
-          await _pref.saveType(result['type']);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomeDriver()),
           );
           setState(() {});
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePassenger(),
+            ),
+          );
+          setState(() {});
         }
       } else {
-        print('wrong');
+        setState(() {
+          this.isIncorrect = true;
+        });
+        return;
       }
     } catch (e) {
       print(e);
     }
+    setState(() {});
   }
 
   @override
@@ -108,6 +133,14 @@ class _Login extends State<Login> {
               controller: this.passwordController,
             ),
             SizedBox(height: 10.0),
+            this.isIncorrect
+                ? Text(
+                    'Incorrect username or password, Please try again',
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  )
+                : SizedBox(),
             PUVButton(
               label: 'Login',
               onPress: handleLogin,

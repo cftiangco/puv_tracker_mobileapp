@@ -117,6 +117,44 @@ class _HomeDriver extends State<HomeDriver> {
     }
   }
 
+  void handleDrive() async {
+    try {
+      final res = await post(
+        Uri.parse('http://puvtrackingsystem.xyz/api/trips/${this.id}/drive'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${this.token}',
+        },
+      );
+      var result = jsonDecode(res.body);
+      if (result['success']) {
+        setState(() {
+          this.isAccepting = false;
+          this.getData();
+        });
+      } else {
+        // if there's a active passengers
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(
+              result['message'].toString(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void handleEndTrip() async {
     try {
       final res = await post(
@@ -176,6 +214,7 @@ class _HomeDriver extends State<HomeDriver> {
               dropButton: (id) => {this.dropPassenger(id)},
               passengers: this.passengers['data'],
               endTrip: this.handleEndTrip,
+              handleDrive: this.handleDrive,
             )
           : SchedulesButton(
               acceptPassenger: (slotId) => this.acceptPassengers(slotId),

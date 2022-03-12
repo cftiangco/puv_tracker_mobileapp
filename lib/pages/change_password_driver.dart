@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:puv_tracker/services/pref_service.dart';
 import 'package:puv_tracker/widgets/PUV_Button.dart';
 import 'package:puv_tracker/widgets/PUV_text_field.dart';
 
@@ -13,23 +17,79 @@ class _ChangePasswordDriverState extends State<ChangePasswordDriver> {
   TextEditingController currentPassword = new TextEditingController();
   TextEditingController newPassword = new TextEditingController();
   TextEditingController ConfirmNewPassword = new TextEditingController();
-  var isPasswordMatched = true;
-  var errorMessage = "";
-  void handleChangePassword() {
-    if (newPassword.text != ConfirmNewPassword.text) {
-      setState(() {
-        errorMessage = "New Password and Confirm Password not matched";
-        this.isPasswordMatched = false;
-      });
-    } else {
-      setState(() {
-        this.isPasswordMatched = true;
-      });
-
-      print("current:" + this.currentPassword.text);
-      print("new:" + this.newPassword.text);
-      print("confirm" + this.ConfirmNewPassword.text);
+  var token;
+  var type;
+  var id;
+  void handleChangePassword() async {
+    try {
+      final res = await put(
+        Uri.parse("http://puvtrackingsystem.xyz/api/changepassword"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${this.token}',
+        },
+        body: jsonEncode({
+          "id": this.id,
+          "type": this.type,
+          "current_password": this.currentPassword.text,
+          "new_password": this.newPassword.text,
+        }),
+      );
+      var result = jsonDecode(res.body);
+      if (result['success']) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(
+              result['message'],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        this.currentPassword.text = "";
+        this.ConfirmNewPassword.text = "";
+        this.newPassword.text = "";
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(
+              result['message'],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
     }
+  }
+
+  void getCache() async {
+    PrefService _pref = new PrefService();
+    this.type = await _pref.readType();
+    this.id = await _pref.readId();
+    this.token = await _pref.readToken();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    this.getCache();
+    super.initState();
   }
 
   @override
@@ -39,7 +99,7 @@ class _ChangePasswordDriverState extends State<ChangePasswordDriver> {
         title: Text('Change Password'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             PUVTextField(
@@ -60,14 +120,6 @@ class _ChangePasswordDriverState extends State<ChangePasswordDriver> {
               obscureText: true,
             ),
             SizedBox(height: 10),
-            this.isPasswordMatched
-                ? SizedBox()
-                : Text(
-                    this.errorMessage,
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
-                  ),
             PUVButton(
               label: 'Change',
               onPress: handleChangePassword,

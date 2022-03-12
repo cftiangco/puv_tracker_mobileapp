@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:puv_tracker/services/pref_service.dart';
 import 'package:puv_tracker/widgets/PUV_Button.dart';
 import 'package:puv_tracker/widgets/PUV_text_field.dart';
+
+import 'home_passenger.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -17,20 +23,80 @@ class _RegisterState extends State<Register> {
   TextEditingController MobileNo = new TextEditingController();
   TextEditingController userName = new TextEditingController();
   TextEditingController password = new TextEditingController();
-  TextEditingController ConfirmPassword = new TextEditingController();
+  TextEditingController confirmPassword = new TextEditingController();
   DateTime date = DateTime(2022, 12, 24);
   int gender = 1;
 
-  void handleSubmit() {
-    print('lastname:' + this.LastName.text);
-    print('firstname:' + this.firstName.text);
-    print('middlename:' + this.middleName.text);
-    print('birthday:' + this.birthday.text);
-    print('mobileno:' + this.MobileNo.text);
-    print('gender' + this.gender.toString());
-    print('username' + this.userName.text);
-    print('password' + this.password.text);
-    print('confirm password' + this.ConfirmPassword.text);
+  var isPasswordMatched = true;
+  var errorMessage = "";
+
+  void handleSubmit() async {
+    this.isPasswordMatched = true;
+    if (this.password.text != this.confirmPassword.text) {
+      this.isPasswordMatched = false;
+      this.errorMessage = "Password didn't matched the confirm password";
+      setState(() {});
+      return;
+    }
+    final url = "http://puvtrackingsystem.xyz/api/register/";
+    var values = {
+      "last_name": this.firstName.text,
+      "first_name": this.LastName.text,
+      "middle_name": this.middleName.text,
+      "mobileno": this.MobileNo.text,
+      "birthday": this.birthday.text,
+      "gender": this.gender,
+      "username": this.userName.text,
+      "password": this.password.text,
+    };
+    try {
+      final res = await post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(values),
+      );
+      var result = jsonDecode(res.body);
+      print(result);
+      if (result.containsKey('errors')) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(
+              result['errors']['username'].toString(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      if (result['success']) {
+        PrefService _pref = new PrefService();
+        await _pref.saveToken(result['token']);
+        await _pref.saveFullName(
+            '${result['data']['last_name']},${result['data']['first_name']} ${result['data']['middle_name']}');
+        int id = int.parse(result['data']['id'].toString());
+        await _pref.saveId(id);
+        await _pref.saveType(result['type']);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePassenger()),
+        );
+        setState(() {});
+        return;
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -131,12 +197,20 @@ class _RegisterState extends State<Register> {
               SizedBox(height: 10),
               PUVTextField(
                 obscureText: true,
-                controller: this.ConfirmPassword,
+                controller: this.confirmPassword,
                 hint: 'Confirm Password',
               ),
               SizedBox(
                 height: 10,
               ),
+              !this.isPasswordMatched
+                  ? Text(
+                      "Password didn't matched the confirm password",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    )
+                  : SizedBox(),
               PUVButton(
                 label: 'Submit',
                 onPress: handleSubmit,
