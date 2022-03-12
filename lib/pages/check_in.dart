@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:puv_tracker/pages/home_passenger.dart';
+import 'package:puv_tracker/services/pref_service.dart';
 import 'package:puv_tracker/widgets/PUV_Button.dart';
 import 'package:puv_tracker/widgets/PUV_text_field.dart';
+import 'package:http/http.dart' as http;
 
 class CheckIn extends StatefulWidget {
   const CheckIn({
@@ -14,6 +20,38 @@ class CheckIn extends StatefulWidget {
 
 class _CheckInState extends State<CheckIn> {
   TextEditingController destinationController = new TextEditingController();
+  var id;
+  var token;
+  var info;
+  void getCache() async {
+    PrefService _pref = new PrefService();
+    this.id = await _pref.readId();
+    this.token = await _pref.readToken();
+    setState(() {
+      this.getTrip();
+    });
+  }
+
+  void getTrip() async {
+    try {
+      var res = await http.get(
+        Uri.parse(
+            "http://puvtrackingsystem.xyz/api/checkin/${this.id}/info/${this.widget.tripId}"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
+        },
+      );
+      print(res.body);
+      setState(() {
+        this.info = jsonDecode(res.body);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void handleCheckIn() {
     showDialog(
       context: context,
@@ -24,10 +62,34 @@ class _CheckInState extends State<CheckIn> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               //handle submit here
-              print(widget.tripId);
-              Navigator.pop(context);
+              var payload = {
+                "trip_id": this.widget.tripId,
+                "passenger_id": this.id,
+                "location": this.destinationController.text,
+                "fare": this.info?['data']?['total'] ?? 0
+              };
+
+              try {
+                final res = await http.post(
+                  Uri.parse('http://puvtrackingsystem.xyz/api/checkin'),
+                  body: json.encode(payload),
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ${this.token}',
+                  },
+                );
+                var result = jsonDecode(res.body);
+                print(result);
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePassenger()),
+                );
+              } catch (e) {
+                print(e);
+              }
             },
             child: Text('Yes'),
           ),
@@ -41,7 +103,15 @@ class _CheckInState extends State<CheckIn> {
   }
 
   @override
+  void initState() {
+    this.getCache();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // this.getCache();
+    print(this.info);
     return Scaffold(
       appBar: AppBar(
         title: Text('Check In'),
@@ -54,7 +124,7 @@ class _CheckInState extends State<CheckIn> {
               SizedBox(height: 40),
               Center(
                 child: Text(
-                  'SM North to SM Fairview',
+                  this.info?['data']?['destination'] ?? "loading...",
                   style: TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
@@ -64,7 +134,7 @@ class _CheckInState extends State<CheckIn> {
               SizedBox(height: 10),
               Center(
                 child: Text(
-                  'Arrive Time: 4:30PM',
+                  'Arrive Time: ${this.info?['data']?['arrived'] ?? "loading..."}',
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.w400,
@@ -74,17 +144,17 @@ class _CheckInState extends State<CheckIn> {
               SizedBox(height: 50),
               TextValue(
                 label: 'Your current balance',
-                value: '₱455.43',
+                value: '₱${this.info?['balance'] ?? "loading..."}',
               ),
               SizedBox(height: 50),
               TextValue(
                 label: 'Fare:',
-                value: '₱32.0',
+                value: '₱${this.info?['data']?['fee'] ?? "loading..."}',
               ),
               SizedBox(height: 20),
               TextValue(
-                label: 'Discount (Student):',
-                value: '12%',
+                label: 'Discount:',
+                value: '${this.info?['data']?['discount'] ?? "loading..."}',
               ),
               SizedBox(height: 20),
               Divider(
@@ -92,7 +162,7 @@ class _CheckInState extends State<CheckIn> {
               ),
               TextValue(
                 label: 'Sub Total:',
-                value: '₱28.0',
+                value: '₱${this.info?['data']?['total'] ?? "loading..."}',
               ),
               SizedBox(height: 30),
               PUVTextField(
@@ -128,13 +198,13 @@ class TextValue extends StatelessWidget {
         Text(
           this.label,
           style: TextStyle(
-            fontSize: 23.0,
+            fontSize: 20.0,
           ),
         ),
         Text(
           this.value,
           style: TextStyle(
-            fontSize: 23.0,
+            fontSize: 18.0,
             fontWeight: FontWeight.bold,
             color: Colors.blue,
           ),

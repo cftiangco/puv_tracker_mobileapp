@@ -19,6 +19,7 @@ class HomeDriver extends StatefulWidget {
 
 class _HomeDriver extends State<HomeDriver> {
   var isAccepting = false;
+  var isDriving = false;
 
   var token;
   var fullName;
@@ -56,6 +57,7 @@ class _HomeDriver extends State<HomeDriver> {
   }
 
   Future<void> getPassengers() async {
+    this.isDriving = false;
     try {
       var res = await http.get(
         Uri.parse('http://puvtrackingsystem.xyz/api/trips/${this.id}/active'),
@@ -66,15 +68,19 @@ class _HomeDriver extends State<HomeDriver> {
         },
       );
       this.passengers = jsonDecode(res.body);
+      print(this.passengers);
       setState(() {
+        if (this.passengers['status_id'] == 2) {
+          this.isDriving = true;
+        }
         if (this.passengers['data']?.length > 0) {
           this.isAccepting = true;
         }
       });
-      print(this.passengers);
     } catch (e) {
       print(e);
     }
+    setState(() {});
   }
 
   void acceptPassengers(slotId) async {
@@ -91,6 +97,7 @@ class _HomeDriver extends State<HomeDriver> {
       if (result['success']) {
         setState(() {
           this.isAccepting = true;
+          this.initState();
         });
       }
     } catch (e) {
@@ -128,8 +135,10 @@ class _HomeDriver extends State<HomeDriver> {
       );
       var result = jsonDecode(res.body);
       if (result['success']) {
+        print(result);
         setState(() {
-          this.isAccepting = false;
+          this.isAccepting = true;
+          this.isDriving = true;
           this.getData();
         });
       } else {
@@ -193,6 +202,12 @@ class _HomeDriver extends State<HomeDriver> {
     }
   }
 
+  Future<void> onRefresh() async {
+    setState(() {
+      this.getPassengers();
+    });
+  }
+
   @override
   void initState() {
     this.getToken();
@@ -210,11 +225,15 @@ class _HomeDriver extends State<HomeDriver> {
       ),
       drawer: PUVDrawer(),
       body: isAccepting == true
-          ? Passengers(
-              dropButton: (id) => {this.dropPassenger(id)},
-              passengers: this.passengers['data'],
-              endTrip: this.handleEndTrip,
-              handleDrive: this.handleDrive,
+          ? RefreshIndicator(
+              onRefresh: this.onRefresh,
+              child: Passengers(
+                dropButton: (id) => {this.dropPassenger(id)},
+                passengers: this.passengers['data'],
+                endTrip: this.handleEndTrip,
+                handleDrive: this.handleDrive,
+                isDriving: this.isDriving,
+              ),
             )
           : SchedulesButton(
               acceptPassenger: (slotId) => this.acceptPassengers(slotId),

@@ -8,11 +8,13 @@ class Passengers extends StatefulWidget {
     required this.dropButton,
     required this.endTrip,
     required this.handleDrive,
+    this.isDriving = false,
   }) : super(key: key);
   final passengers;
   final dropButton;
   final endTrip;
   final handleDrive;
+  final isDriving;
   @override
   _PassengersState createState() => _PassengersState();
 }
@@ -42,69 +44,65 @@ class _PassengersState extends State<Passengers> {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Total Earning: P535'),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Confirmation'),
-                                content: Text(
-                                  'Are you sure you want to end this Trip Now?',
+                    this.widget.isDriving
+                        ? ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirmation'),
+                                  content: Text(
+                                    'Are you sure you want to end this Trip Now?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        this.widget.endTrip();
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Yes'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('No'),
+                                    ),
+                                  ],
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      this.widget.endTrip();
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Yes'),
+                              );
+                            },
+                            child: Text('End Trip'),
+                          )
+                        : ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirmation'),
+                                  content: Text(
+                                    'Are you sure you want to drive now?',
                                   ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('No'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          child: Text('End Trip'),
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Confirmation'),
-                                content: Text(
-                                  'Are you sure you want to drive now?',
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        this.widget.handleDrive();
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Yes'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('No'),
+                                    ),
+                                  ],
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      this.widget.handleDrive();
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Yes'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('No'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          child: Text('Drive'),
-                        ),
-                      ],
+                              );
+                            },
+                            child: Text('Drive'),
+                          ),
+                    SizedBox(
+                      width: 10.0,
                     ),
                   ],
                 )
