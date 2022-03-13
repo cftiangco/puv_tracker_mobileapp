@@ -20,6 +20,8 @@ class CheckIn extends StatefulWidget {
 
 class _CheckInState extends State<CheckIn> {
   TextEditingController destinationController = new TextEditingController();
+  var isError = false;
+  var errorMessage = "";
   var id;
   var token;
   var info;
@@ -29,6 +31,7 @@ class _CheckInState extends State<CheckIn> {
     this.token = await _pref.readToken();
     setState(() {
       this.getTrip();
+      this.getValidation();
     });
   }
 
@@ -43,7 +46,7 @@ class _CheckInState extends State<CheckIn> {
           HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
         },
       );
-      print(res.body);
+      // print(res.body);
       setState(() {
         this.info = jsonDecode(res.body);
       });
@@ -52,7 +55,62 @@ class _CheckInState extends State<CheckIn> {
     }
   }
 
+  void getValidation() async {
+    try {
+      var res = await http.get(
+        Uri.parse(
+            "http://puvtrackingsystem.xyz/api/checkin/${this.widget.tripId}/validation"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
+        },
+      );
+      var result = jsonDecode(res.body);
+      print(result);
+      if (!result?['success']) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(
+              result['message'].toString(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void handleCheckIn() {
+    isError = false;
+    if (this.destinationController.text == "") {
+      setState(() {
+        this.errorMessage = 'Destination field is required';
+        isError = true;
+      });
+      return;
+    }
+    var balance = this.info['balance'].toString();
+    if (double.parse(balance) < double.parse(this.info['data']['total'])) {
+      print('balance not eno');
+      setState(() {
+        this.errorMessage = 'Your Balance is not enough please top-up first';
+        isError = true;
+      });
+      return;
+    }
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -80,13 +138,13 @@ class _CheckInState extends State<CheckIn> {
                     'Authorization': 'Bearer ${this.token}',
                   },
                 );
-                var result = jsonDecode(res.body);
-                print(result);
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePassenger()),
-                );
+                setState(() {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePassenger()),
+                  );
+                });
               } catch (e) {
                 print(e);
               }
@@ -110,7 +168,6 @@ class _CheckInState extends State<CheckIn> {
 
   @override
   Widget build(BuildContext context) {
-    // this.getCache();
     print(this.info);
     return Scaffold(
       appBar: AppBar(
@@ -144,7 +201,7 @@ class _CheckInState extends State<CheckIn> {
               SizedBox(height: 50),
               TextValue(
                 label: 'Your current balance',
-                value: '₱${this.info?['balance'] ?? "loading..."}',
+                value: '₱${this.info?['balance'] ?? "0"}',
               ),
               SizedBox(height: 50),
               TextValue(
@@ -169,7 +226,16 @@ class _CheckInState extends State<CheckIn> {
                 hint: 'Your Destination',
                 controller: this.destinationController,
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 10),
+              this.isError
+                  ? Text(
+                      this.errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  : SizedBox(),
               PUVButton(
                 label: 'Check In',
                 onPress: this.handleCheckIn,

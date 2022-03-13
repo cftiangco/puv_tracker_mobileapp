@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:puv_tracker/pages/change_password_driver.dart';
+import 'package:puv_tracker/pages/discount.dart';
 import 'package:puv_tracker/pages/update_information.dart';
 import 'package:puv_tracker/services/pref_service.dart';
 import 'package:puv_tracker/widgets/item_card.dart';
@@ -67,6 +68,22 @@ class _MyAccountDriverState extends State<MyAccountDriver> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const UpdateInformation(),
+                        ),
+                      );
+                    },
+                  )
+                : SizedBox(),
+            this.type == 1
+                ? ItemCards(
+                    label: "Discount",
+                    icon: Icon(
+                      Icons.card_membership,
+                    ),
+                    onPress: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Discount(),
                         ),
                       );
                     },

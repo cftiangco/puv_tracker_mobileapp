@@ -69,14 +69,12 @@ class _HomeDriver extends State<HomeDriver> {
       );
       this.passengers = jsonDecode(res.body);
       print(this.passengers);
-      setState(() {
+      if (this.passengers['status_id'] > 0) {
         if (this.passengers['status_id'] == 2) {
           this.isDriving = true;
         }
-        if (this.passengers['data']?.length > 0) {
-          this.isAccepting = true;
-        }
-      });
+        this.isAccepting = true;
+      }
     } catch (e) {
       print(e);
     }
@@ -229,10 +227,11 @@ class _HomeDriver extends State<HomeDriver> {
               onRefresh: this.onRefresh,
               child: Passengers(
                 dropButton: (id) => {this.dropPassenger(id)},
-                passengers: this.passengers['data'],
+                passengers: this.passengers['data'] ?? [],
                 endTrip: this.handleEndTrip,
                 handleDrive: this.handleDrive,
                 isDriving: this.isDriving,
+                handleRefresh: this.onRefresh,
               ),
             )
           : SchedulesButton(

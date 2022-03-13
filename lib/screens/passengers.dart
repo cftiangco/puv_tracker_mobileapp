@@ -2,24 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:puv_tracker/widgets/passenger_card.dart';
 
 class Passengers extends StatefulWidget {
-  const Passengers({
-    Key? key,
-    required this.passengers,
-    required this.dropButton,
-    required this.endTrip,
-    required this.handleDrive,
-    this.isDriving = false,
-  }) : super(key: key);
+  const Passengers(
+      {Key? key,
+      required this.passengers,
+      required this.dropButton,
+      required this.endTrip,
+      required this.handleDrive,
+      this.isDriving = false,
+      this.handleRefresh})
+      : super(key: key);
   final passengers;
   final dropButton;
   final endTrip;
   final handleDrive;
   final isDriving;
+  final handleRefresh;
   @override
   _PassengersState createState() => _PassengersState();
 }
 
 class _PassengersState extends State<Passengers> {
+  Future<void> handleRefresh() async {
+    print('hello');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,16 +39,16 @@ class _PassengersState extends State<Passengers> {
               color: Colors.blue[300],
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  'Completed: 4/8',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // Text(
+                //   'Completed: 4/8',
+                //   style: TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 20.0,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -110,22 +116,35 @@ class _PassengersState extends State<Passengers> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.passengers?.length ?? 0,
-              itemBuilder: (context, index) {
-                return PassengerCard(
-                  statusId: widget.passengers[index]['status_id'] ?? 0,
-                  onPress: () =>
-                      widget.dropButton(widget.passengers?[index]['id'] ?? 0),
-                  fullName: widget.passengers[index]['full_name'].toString(),
-                  typeName:
-                      widget.passengers[index]['type']?.toString() ?? 'Regular',
-                  location: widget.passengers[index]['location'].toString(),
-                  fee: widget.passengers?[index]['fee'].toString(),
-                  arrived: widget.passengers[index]['arrived'].toString(),
-                );
-              },
-            ),
+            child: this.widget.passengers?.length > 0
+                ? ListView.builder(
+                    itemCount: widget.passengers?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return PassengerCard(
+                        statusId: widget.passengers[index]['status_id'] ?? 0,
+                        onPress: () => widget
+                            .dropButton(widget.passengers?[index]['id'] ?? 0),
+                        fullName:
+                            widget.passengers[index]['full_name'].toString(),
+                        typeName:
+                            widget.passengers[index]['type']?.toString() ??
+                                'Regular',
+                        location:
+                            widget.passengers[index]['location'].toString(),
+                        fee: widget.passengers?[index]['fare'].toString(),
+                        arrived: widget.passengers[index]['arrived'].toString(),
+                      );
+                    },
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: this.widget.handleRefresh,
+                        child: Text('Click here to refresh'),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),

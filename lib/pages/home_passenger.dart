@@ -64,7 +64,6 @@ class _HomePassengerState extends State<HomePassenger> {
       );
       setState(() {
         this.balance = jsonDecode(res.body);
-        print(this.balance);
       });
     } catch (e) {
       print(e);
@@ -99,7 +98,6 @@ class _HomePassengerState extends State<HomePassenger> {
       setState(() {
         this.activeSession = jsonDecode(res.body);
         if (this.activeSession?['success']) {
-          print(this.activeSession);
           isActive = true;
         }
       });
@@ -223,7 +221,7 @@ class _HomePassengerState extends State<HomePassenger> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Current Balance: ₱${this.balance?['data'] ?? 'Loading...'}',
+                    'Current Balance: ₱${this.balance?['data'] ?? '0'}',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -247,7 +245,7 @@ class _HomePassengerState extends State<HomePassenger> {
                     handleCompleted: this.handleCompleted,
                   )
                 : available_trips(
-                    data: this.activeSession?['data'],
+                    data: this.availables?['data'],
                     handleCheckIn: this.handleCheckIn,
                   ),
           ],
