@@ -69,7 +69,7 @@ class _HomeDriver extends State<HomeDriver> {
       );
       this.passengers = jsonDecode(res.body);
       print(this.passengers);
-      if (this.passengers['status_id'] > 0) {
+      if (this.passengers?['status_id'] > 0) {
         if (this.passengers['status_id'] == 2) {
           this.isDriving = true;
         }
@@ -219,7 +219,16 @@ class _HomeDriver extends State<HomeDriver> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PUV Tracker'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('UV Tracker'),
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: this.getData,
+            ),
+          ],
+        ),
       ),
       drawer: PUVDrawer(),
       body: isAccepting == true

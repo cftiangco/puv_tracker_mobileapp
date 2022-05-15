@@ -27,17 +27,47 @@ class _RegisterState extends State<Register> {
   DateTime date = DateTime(2022, 12, 24);
   int gender = 1;
 
-  var isPasswordMatched = true;
+  var isNoError = true;
   var errorMessage = "";
 
   void handleSubmit() async {
-    this.isPasswordMatched = true;
+    this.isNoError = true;
+
+    if (this.firstName.text.isEmpty) {
+      this.isNoError = false;
+      this.errorMessage = "First Name is a required field";
+      setState(() {});
+      return;
+    }
+
+    if (this.MobileNo.text.isEmpty) {
+      this.isNoError = false;
+      this.errorMessage = "Last Name is a required field";
+      setState(() {});
+      return;
+    }
+
+    if (this.birthday.text.isEmpty) {
+      this.isNoError = false;
+      this.errorMessage = "Birthday is a required field";
+      setState(() {});
+      return;
+    }
+
+    if (this.MobileNo.text.isEmpty) {
+      this.isNoError = false;
+      this.errorMessage = "Mobile # is a required field";
+      setState(() {});
+      return;
+    }
+
     if (this.password.text != this.confirmPassword.text) {
-      this.isPasswordMatched = false;
+      this.isNoError = false;
       this.errorMessage = "Password didn't matched the confirm password";
       setState(() {});
       return;
     }
+
     final url = "http://puvtrackingsystem.xyz/api/register/";
     var values = {
       "last_name": this.firstName.text,
@@ -203,9 +233,9 @@ class _RegisterState extends State<Register> {
               SizedBox(
                 height: 10,
               ),
-              !this.isPasswordMatched
+              !this.isNoError
                   ? Text(
-                      "Password didn't matched the confirm password",
+                      this.errorMessage,
                       style: TextStyle(
                         color: Colors.red,
                       ),

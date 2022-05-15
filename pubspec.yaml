@@ -38,6 +38,8 @@ dependencies:
   http: ^0.13.4
   shared_preferences: ^2.0.13
   image_picker: ^0.8.4+11
+  url_launcher: ^6.0.20
+  pay: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +67,7 @@ flutter:
   assets:
     - assets/images/student.png
     - assets/images/logo.png
+    - assets/gpay.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:puv_tracker/widgets/PUV_text_form_field.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:puv_tracker/services/pref_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class Discount extends StatefulWidget {
   const Discount({Key? key}) : super(key: key);
@@ -14,20 +14,35 @@ class Discount extends StatefulWidget {
 }
 
 class _DiscountState extends State<Discount> {
-  TextEditingController idNoController = new TextEditingController();
-  File? image;
-  Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      setState(() {
-        final temp = File(image.path);
-        this.image = temp;
-        print(this.image);
-      });
-    } on PlatformException catch (e) {
-      print(e);
-    }
+  var id;
+  var token;
+  var discount;
+  void getCache() async {
+    PrefService _pref = new PrefService();
+    this.id = await _pref.readId();
+    this.token = await _pref.readToken();
+    this.getDiscount();
+    this.setState(() {});
+  }
+
+  Future<void> getDiscount() async {
+    var res = await http.get(
+      Uri.parse('http://www.puvtrackingsystem.xyz/api/discount/${this.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
+      },
+    );
+    setState(() {
+      this.discount = jsonDecode(res.body);
+    });
+  }
+
+  @override
+  void initState() {
+    this.getCache();
+    super.initState();
   }
 
   @override
@@ -39,16 +54,51 @@ class _DiscountState extends State<Discount> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            PUVTextFormField(
-              labelText: "ID #",
-              controller: idNoController,
+            Row(
+              children: [
+                Text('Your ID #:'),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  this.discount['idno'] ?? "No uploaded Discount",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Text('Status:'),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  this.discount['status'] ?? "No uploaded Discount",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 30,
             ),
             TextButton(
-              onPressed: () => this.pickImage(),
-              child: Text('Browse image'),
+              onPressed: () async {
+                final url =
+                    "http://www.puvtrackingsystem.xyz/uploading/${this.id}";
+
+                await launch(url);
+              },
+              child: Text('Upload Discount ID'),
             ),
-            this.image != null ? Image.file(image!) : Text('No image found')
           ],
         ),
       ),

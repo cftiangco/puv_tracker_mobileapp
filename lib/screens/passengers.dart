@@ -54,6 +54,9 @@ class _PassengersState extends State<Passengers> {
                   children: [
                     this.widget.isDriving
                         ? ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.redAccent,
+                            ),
                             onPressed: () {
                               showDialog(
                                 context: context,
@@ -78,16 +81,19 @@ class _PassengersState extends State<Passengers> {
                                 ),
                               );
                             },
-                            child: Text('End Trip'),
+                            child: Text('End Driving'),
                           )
                         : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.yellowAccent,
+                            ),
                             onPressed: () {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: Text('Confirmation'),
                                   content: Text(
-                                    'Are you sure you want to drive now?',
+                                    'Are you sure you want to start driving now?',
                                   ),
                                   actions: [
                                     TextButton(
@@ -105,7 +111,7 @@ class _PassengersState extends State<Passengers> {
                                 ),
                               );
                             },
-                            child: Text('Drive'),
+                            child: Text('Start Driving'),
                           ),
                     SizedBox(
                       width: 10.0,
