@@ -221,11 +221,22 @@ class _HomePassengerState extends State<HomePassenger> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Current Balance: ₱${this.balance?['data'] ?? '0'}',
+                    '₱${this.balance?['data'] ?? '0'}',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22.0,
+                      fontSize: 35.0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  Text(
+                    'Your Current Balance',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
                     ),
                   ),
                 ],

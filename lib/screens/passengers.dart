@@ -85,7 +85,7 @@ class _PassengersState extends State<Passengers> {
                           )
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.yellowAccent,
+                              primary: Colors.blueAccent,
                             ),
                             onPressed: () {
                               showDialog(

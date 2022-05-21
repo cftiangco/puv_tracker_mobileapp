@@ -35,7 +35,9 @@ class _DiscountState extends State<Discount> {
       },
     );
     setState(() {
-      this.discount = jsonDecode(res.body);
+      if (res.body.isNotEmpty) {
+        this.discount = jsonDecode(res.body);
+      }
     });
   }
 
@@ -56,36 +58,46 @@ class _DiscountState extends State<Discount> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Text('Your ID #:'),
-                SizedBox(
-                  width: 10,
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Text('ID No.:'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      this.discount?['idno'] ?? "No uploaded Discount",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  this.discount['idno'] ?? "No uploaded Discount",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
             ),
             SizedBox(
               height: 10,
             ),
-            Row(
-              children: [
-                Text('Status:'),
-                SizedBox(
-                  width: 10,
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Text('Status:'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      this.discount?['status'] ?? "No uploaded Discount",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  this.discount['status'] ?? "No uploaded Discount",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
             ),
             SizedBox(
               height: 30,

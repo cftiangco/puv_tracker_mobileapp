@@ -32,18 +32,22 @@ class _Login extends State<Login> {
     if (this.id > 0 && this.type > 0) {
       if (type == 2) {
         setState(() {
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeDriver()),
+            (route) => false,
           );
+          setState(() {});
         });
         return;
       }
       setState(() {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomePassenger()),
+          (route) => false,
         );
+        setState(() {});
       });
     }
   }
@@ -64,22 +68,24 @@ class _Login extends State<Login> {
       if (result['success'] == true) {
         await _pref.saveToken(result['token']);
         await _pref.saveFullName(
-            '${result['data']['last_name']},${result['data']['first_name']} ${result['data']['middle_name']}');
+            '${result['data']['first_name']} ${result['data']['last_name']}');
         int id = int.parse(result['data']['id'].toString());
         await _pref.saveId(id);
         await _pref.saveType(result['type']);
         if (result['type'] == 2) {
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeDriver()),
+            (route) => false,
           );
           setState(() {});
         } else {
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => HomePassenger(),
             ),
+            (route) => false,
           );
           setState(() {});
         }

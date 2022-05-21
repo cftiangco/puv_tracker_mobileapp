@@ -94,19 +94,7 @@ class _MyAccountDriverState extends State<MyAccountDriver> {
                       );
                     },
                   )
-                : SizedBox(),
-            ItemCards(
-              label: "Logout",
-              icon: Icon(Icons.exit_to_app),
-              onPress: () async {
-                SharedPreferences preferences =
-                    await SharedPreferences.getInstance();
-                await preferences.clear();
-
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              },
-            ),
+                : SizedBox()
           ],
         ));
   }
