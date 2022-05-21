@@ -17,14 +17,14 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   TextEditingController birthday = new TextEditingController();
-  TextEditingController LastName = new TextEditingController();
+  TextEditingController lastName = new TextEditingController();
   TextEditingController firstName = new TextEditingController();
   TextEditingController middleName = new TextEditingController();
-  TextEditingController MobileNo = new TextEditingController();
+  TextEditingController mobileNo = new TextEditingController();
   TextEditingController userName = new TextEditingController();
   TextEditingController password = new TextEditingController();
   TextEditingController confirmPassword = new TextEditingController();
-  DateTime date = DateTime(2022, 12, 24);
+  DateTime date = DateTime(2012, 1, 1);
   int gender = 1;
 
   var isNoError = true;
@@ -40,7 +40,7 @@ class _RegisterState extends State<Register> {
       return;
     }
 
-    if (this.MobileNo.text.isEmpty) {
+    if (this.lastName.text.isEmpty) {
       this.isNoError = false;
       this.errorMessage = "Last Name is a required field";
       setState(() {});
@@ -54,7 +54,7 @@ class _RegisterState extends State<Register> {
       return;
     }
 
-    if (this.MobileNo.text.isEmpty) {
+    if (this.mobileNo.text.isEmpty) {
       this.isNoError = false;
       this.errorMessage = "Mobile # is a required field";
       setState(() {});
@@ -70,10 +70,10 @@ class _RegisterState extends State<Register> {
 
     final url = "http://puvtrackingsystem.xyz/api/register/";
     var values = {
-      "last_name": this.firstName.text,
-      "first_name": this.LastName.text,
+      "last_name": this.lastName.text,
+      "first_name": this.firstName.text,
       "middle_name": this.middleName.text,
-      "mobileno": this.MobileNo.text,
+      "mobileno": this.mobileNo.text,
       "birthday": this.birthday.text,
       "gender": this.gender,
       "username": this.userName.text,
@@ -117,9 +117,10 @@ class _RegisterState extends State<Register> {
         int id = int.parse(result['data']['id'].toString());
         await _pref.saveId(id);
         await _pref.saveType(result['type']);
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomePassenger()),
+          (route) => false,
         );
         setState(() {});
         return;
@@ -141,7 +142,7 @@ class _RegisterState extends State<Register> {
           child: Column(
             children: [
               PUVTextField(
-                controller: this.LastName,
+                controller: this.lastName,
                 hint: 'Last Name',
               ),
               SizedBox(height: 10),
@@ -177,7 +178,7 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 10),
               PUVTextField(
-                controller: this.MobileNo,
+                controller: this.mobileNo,
                 hint: 'Mobile #',
               ),
               SizedBox(height: 10),

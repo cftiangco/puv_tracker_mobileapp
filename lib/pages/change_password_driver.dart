@@ -47,7 +47,12 @@ class _ChangePasswordDriverState extends State<ChangePasswordDriver> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  });
+                },
                 child: Text('OK'),
               ),
             ],
