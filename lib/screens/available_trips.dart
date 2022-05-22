@@ -6,10 +6,12 @@ class available_trips extends StatefulWidget {
     Key? key,
     required this.data,
     required this.handleCheckIn,
+    this.currentBalance,
   }) : super(key: key);
 
   final data;
   final handleCheckIn;
+  final currentBalance;
 
   @override
   State<available_trips> createState() => _available_tripsState();
@@ -31,8 +33,12 @@ class _available_tripsState extends State<available_trips> {
             destination:
                 '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
             arrive: this.widget.data[index]['arrival'],
-            onPress: () =>
-                this.widget.handleCheckIn(this.widget.data[index]['id']),
+            onPress: () => this.widget.handleCheckIn(
+                  this.widget.data[index]['schedule_id'],
+                  '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
+                  this.widget.currentBalance,
+                  this.widget.data[index]['id'],
+                ),
           );
         },
       ),
@@ -91,18 +97,10 @@ class TripCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Fare: ₱${this.fare}',
+                '${this.destination}',
                 style: TextStyle(
-                  fontSize: 12.0,
-                ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Text(
-                '(${this.destination})',
-                style: TextStyle(
-                  fontSize: 12.0,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],

@@ -43,6 +43,7 @@ class _HomeDriver extends State<HomeDriver> {
   }
 
   Future<void> getData() async {
+    this.onRefresh();
     var res = await http.get(
       Uri.parse('http://puvtrackingsystem.xyz/api/schedules/${this.id}'),
       headers: {

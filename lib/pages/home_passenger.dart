@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:puv_tracker/pages/check_in.dart';
+import 'package:puv_tracker/pages/locations.dart';
 import 'package:puv_tracker/screens/active_session.dart';
 import 'package:puv_tracker/screens/available_trips.dart';
 import 'package:puv_tracker/services/pref_service.dart';
@@ -23,6 +23,7 @@ class _HomePassengerState extends State<HomePassenger> {
   var isActive = false;
   var activeSession;
   var balance;
+  var locations;
   void getAvailable() async {
     try {
       var res = await http.get(
@@ -70,15 +71,36 @@ class _HomePassengerState extends State<HomePassenger> {
     }
   }
 
-  void handleCheckIn(id) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CheckIn(
-          tripId: id,
-        ),
-      ),
-    );
+  void handleCheckIn(id, destination, currentBalance, tripId) async {
+    try {
+      var res = await http.get(
+        Uri.parse('http://puvtrackingsystem.xyz/api/locations/${id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer ${this.token}'
+        },
+      );
+      setState(() {
+        this.locations = jsonDecode(res.body);
+        print(locations);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Locations(
+              data: this.locations?['data'],
+              userId: this.id,
+              token: this.token,
+              destination: destination,
+              currentBalance: currentBalance,
+              tripId: tripId,
+            ),
+          ),
+        );
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> handleRefresh() async {
@@ -247,7 +269,7 @@ class _HomePassengerState extends State<HomePassenger> {
                     locationTo: this.activeSession?['data']?['location_to'] ??
                         'Loading..',
                     location:
-                        this.activeSession?['data']?['location'] ?? 'Loading..',
+                        this.activeSession?['data']?['loc'] ?? 'Loading..',
                     departing: this.activeSession?['data']?['departing'] ??
                         'Loading..',
                     fare: this.activeSession?['data']?['fare'] ?? 'Loading..',
@@ -258,6 +280,7 @@ class _HomePassengerState extends State<HomePassenger> {
                 : available_trips(
                     data: this.availables?['data'],
                     handleCheckIn: this.handleCheckIn,
+                    currentBalance: this.balance?['data'],
                   ),
           ],
         ),

@@ -22,10 +22,6 @@ class Passengers extends StatefulWidget {
 }
 
 class _PassengersState extends State<Passengers> {
-  Future<void> handleRefresh() async {
-    print('hello');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,8 +131,7 @@ class _PassengersState extends State<Passengers> {
                         typeName:
                             widget.passengers[index]['type']?.toString() ??
                                 'Regular',
-                        location:
-                            widget.passengers[index]['location'].toString(),
+                        location: widget.passengers[index]['loc'].toString(),
                         fee: widget.passengers?[index]['fare'].toString(),
                         arrived: widget.passengers[index]['arrived'].toString(),
                       );
