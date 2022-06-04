@@ -111,61 +111,83 @@ class _Login extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.only(
-          left: 30,
-          right: 30,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("/images/login-background.png"),
+            fit: BoxFit.cover,
+            colorFilter: new ColorFilter.mode(
+              Colors.black.withOpacity(0.5),
+              BlendMode.dstATop,
+            ),
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 170,
-              width: 170,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/logo.png'),
+        margin: EdgeInsets.only(
+          left: 0,
+          right: 0,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 170,
+                width: 170,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/logo.png'),
+                  ),
+                  // shape: BoxShape.circle,
                 ),
-                // shape: BoxShape.circle,
               ),
-            ),
-            PUVTextField(
-              hint: 'Username',
-              controller: this.usernameController,
-            ),
-            SizedBox(height: 10.0),
-            PUVTextField(
-              obscureText: true,
-              hint: 'Password',
-              controller: this.passwordController,
-            ),
-            SizedBox(height: 10.0),
-            this.isIncorrect
-                ? Text(
-                    'Incorrect username or password, Please try again',
+              PUVTextField(
+                hint: 'Username',
+                controller: this.usernameController,
+              ),
+              SizedBox(height: 10.0),
+              PUVTextField(
+                obscureText: true,
+                hint: 'Password',
+                controller: this.passwordController,
+              ),
+              SizedBox(height: 10.0),
+              this.isIncorrect
+                  ? Text(
+                      'Incorrect username or password, Please try again',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    )
+                  : SizedBox(),
+              PUVButton(
+                label: 'Login',
+                onPress: handleLogin,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              TextButton(
+                onPressed: () => print('register account page'),
+                child: TextButton(
+                  child: Text(
+                    'Register New Account',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Colors.white,
+                      fontSize: 18.0,
                     ),
-                  )
-                : SizedBox(),
-            PUVButton(
-              label: 'Login',
-              onPress: handleLogin,
-            ),
-            TextButton(
-              onPressed: () => print('register account page'),
-              child: TextButton(
-                child: Text('Register New Account'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Register(),
-                    ),
-                  );
-                },
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Register(),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

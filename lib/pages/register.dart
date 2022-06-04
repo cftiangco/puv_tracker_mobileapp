@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:puv_tracker/services/pref_service.dart';
+import 'package:puv_tracker/widgets/PUB_text_field_number.dart';
 import 'package:puv_tracker/widgets/PUV_Button.dart';
 import 'package:puv_tracker/widgets/PUV_text_field.dart';
+import 'package:puv_tracker/widgets/PUV_text_field_character.dart';
 
 import 'home_passenger.dart';
 
@@ -57,6 +59,20 @@ class _RegisterState extends State<Register> {
     if (this.mobileNo.text.isEmpty) {
       this.isNoError = false;
       this.errorMessage = "Mobile # is a required field";
+      setState(() {});
+      return;
+    }
+
+    if (this.password.text.length < 6 || this.userName.text.length < 6) {
+      this.isNoError = false;
+      this.errorMessage = "Username or Password must be 6 characters long";
+      setState(() {});
+      return;
+    }
+
+    if (this.mobileNo.text.length > 11) {
+      this.isNoError = false;
+      this.errorMessage = "Mobile number must be 11 digits long";
       setState(() {});
       return;
     }
@@ -141,17 +157,17 @@ class _RegisterState extends State<Register> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              PUVTextField(
+              PUVTextFieldCharacter(
                 controller: this.lastName,
                 hint: 'Last Name',
               ),
               SizedBox(height: 10),
-              PUVTextField(
+              PUVTextFieldCharacter(
                 controller: this.firstName,
                 hint: 'First Name',
               ),
               SizedBox(height: 10),
-              PUVTextField(
+              PUVTextFieldCharacter(
                 controller: this.middleName,
                 hint: 'Middle Name',
               ),
@@ -177,7 +193,7 @@ class _RegisterState extends State<Register> {
                 },
               ),
               SizedBox(height: 10),
-              PUVTextField(
+              PUVTextFieldNumber(
                 controller: this.mobileNo,
                 hint: 'Mobile #',
               ),

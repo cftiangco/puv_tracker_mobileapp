@@ -33,11 +33,14 @@ class _available_tripsState extends State<available_trips> {
             destination:
                 '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
             arrive: this.widget.data[index]['arrival'],
+            departure: this.widget.data[index]['arrival'],
             onPress: () => this.widget.handleCheckIn(
                   this.widget.data[index]['schedule_id'],
                   '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
                   this.widget.currentBalance,
                   this.widget.data[index]['id'],
+                  this.widget.data[index]['number_of_seats'],
+                  this.widget.data[index]['passengers'],
                 ),
           );
         },
@@ -54,6 +57,7 @@ class TripCard extends StatelessWidget {
     this.fare,
     this.destination,
     this.arrive,
+    this.departure,
     required this.onPress,
   }) : super(key: key);
 
@@ -62,6 +66,7 @@ class TripCard extends StatelessWidget {
   final fare;
   final destination;
   final arrive;
+  final departure;
   final onPress;
   @override
   Widget build(BuildContext context) {
@@ -107,6 +112,12 @@ class TripCard extends StatelessWidget {
           ),
           SizedBox(
             height: 10,
+          ),
+          Text(
+            'Departure Time: ${this.arrive}',
+            style: TextStyle(
+              fontSize: 12.0,
+            ),
           ),
           Text(
             'Arrived Time: ${this.arrive}',

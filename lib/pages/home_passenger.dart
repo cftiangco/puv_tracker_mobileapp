@@ -36,6 +36,7 @@ class _HomePassengerState extends State<HomePassenger> {
       );
       setState(() {
         this.availables = jsonDecode(res.body);
+        print(this.availables);
       });
     } catch (e) {
       print(e);
@@ -71,7 +72,26 @@ class _HomePassengerState extends State<HomePassenger> {
     }
   }
 
-  void handleCheckIn(id, destination, currentBalance, tripId) async {
+  void handleCheckIn(
+      id, destination, currentBalance, tripId, seats, passengers) async {
+    if (seats == passengers) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Warning'),
+          content: Text("Sorry this schedule is already full"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     try {
       var res = await http.get(
         Uri.parse('http://puvtrackingsystem.xyz/api/locations/${id}'),
@@ -83,7 +103,6 @@ class _HomePassengerState extends State<HomePassenger> {
       );
       setState(() {
         this.locations = jsonDecode(res.body);
-        print(locations);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -236,9 +255,19 @@ class _HomePassengerState extends State<HomePassenger> {
         child: Column(
           children: [
             Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("/images/home-background.jpg"),
+                  fit: BoxFit.cover,
+                  colorFilter: new ColorFilter.mode(
+                    Colors.black.withOpacity(0.8),
+                    BlendMode.dstATop,
+                  ),
+                ),
+              ),
               height: 150,
               width: double.infinity,
-              color: Colors.blue[300],
+              // color: Colors.blue[300],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -23,6 +23,26 @@ class Locations extends StatefulWidget {
 
 class _LocationsState extends State<Locations> {
   void handleSelectedLocation({id, location, fare}) {
+    if (this.widget.currentBalance == 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Warning'),
+          content: Text(
+            "You don't have enough balance to complete this transaction",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     if (double.parse(this.widget.currentBalance) < double.parse(fare)) {
       showDialog(
         context: context,

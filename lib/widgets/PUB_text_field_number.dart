@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class PUVTextField extends StatelessWidget {
-  const PUVTextField(
+class PUVTextFieldNumber extends StatelessWidget {
+  const PUVTextFieldNumber(
       {Key? key,
       this.hint,
       this.controller,
@@ -26,6 +26,10 @@ class PUVTextField extends StatelessWidget {
       controller: this.controller,
       onTap: this.onTop,
       enabled: this.enabled,
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly
+      ], //
     );
   }
 }
