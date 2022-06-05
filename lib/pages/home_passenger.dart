@@ -24,6 +24,7 @@ class _HomePassengerState extends State<HomePassenger> {
   var activeSession;
   var balance;
   var locations;
+
   void getAvailable() async {
     try {
       var res = await http.get(
@@ -138,6 +139,7 @@ class _HomePassengerState extends State<HomePassenger> {
       );
       setState(() {
         this.activeSession = jsonDecode(res.body);
+        print(this.activeSession);
         if (this.activeSession?['success']) {
           isActive = true;
         }
@@ -301,8 +303,14 @@ class _HomePassengerState extends State<HomePassenger> {
                         this.activeSession?['data']?['loc'] ?? 'Loading..',
                     departing: this.activeSession?['data']?['departing'] ??
                         'Loading..',
+                    arriving:
+                        this.activeSession?['data']?['arriving'] ?? 'Loading..',
                     fare: this.activeSession?['data']?['fare'] ?? 'Loading..',
                     tripId: this.activeSession?['data']?['id'] ?? 0,
+                    discount:
+                        this.activeSession?['data']?['type'] ?? 'Loading..',
+                    status: this.activeSession?['data']?['status_id'] ?? 0,
+                    passengers: this.activeSession?['data']?['passengers'] ?? 0,
                     handleCancel: this.handleCancel,
                     handleCompleted: this.handleCompleted,
                   )

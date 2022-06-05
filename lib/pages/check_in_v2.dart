@@ -33,6 +33,7 @@ class CheckInV2 extends StatefulWidget {
 class _CheckInV2State extends State<CheckInV2> {
   var computation;
   var subTotal;
+  String _noOfPassengers = "1";
 
   void handleCheckIn() {
     showDialog(
@@ -64,6 +65,7 @@ class _CheckInV2State extends State<CheckInV2> {
       "passenger_id": this.widget.userId,
       "location": this.widget.locationId,
       "location_id": this.widget.locationId,
+      "passengers": _noOfPassengers,
       "fare": this.computation?['subTotal'] ?? 0,
     };
     try {
@@ -75,24 +77,45 @@ class _CheckInV2State extends State<CheckInV2> {
           'Authorization': 'Bearer ${this.widget.token}',
         },
       );
-      print(jsonDecode(res.body));
-      setState(() {
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePassenger()),
+      var result = jsonDecode(res.body);
+      if (result?['success']) {
+        setState(() {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomePassenger()),
+          );
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Alert'),
+            content: Text(result?['message']),
+            actions: [
+              TextButton(
+                onPressed: () => {
+                  Navigator.pop(context),
+                  Navigator.pop(context),
+                  Navigator.pop(context),
+                  Navigator.pop(context),
+                },
+                child: Text('Ok'),
+              ),
+            ],
+          ),
         );
-      });
+      }
     } catch (e) {
       print(e);
     }
   }
 
-  void getComputation() async {
+  void getComputation(int noPassengers) async {
     try {
       var res = await http.get(
         Uri.parse(
-            'http://puvtrackingsystem.xyz/api/fare/${this.widget.userId}/${this.widget.locationId}'),
+            'http://puvtrackingsystem.xyz/api/fare/${this.widget.userId}/${this.widget.locationId}/${noPassengers}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -108,9 +131,16 @@ class _CheckInV2State extends State<CheckInV2> {
     }
   }
 
+  void handleNoOfPassengerChange(value) {
+    setState(() {
+      _noOfPassengers = value;
+      getComputation(int.parse(_noOfPassengers));
+    });
+  }
+
   @override
   void initState() {
-    getComputation();
+    getComputation(1);
     super.initState();
   }
 
@@ -143,6 +173,36 @@ class _CheckInV2State extends State<CheckInV2> {
             TextValue(
               label: 'Your location:',
               value: this.widget.location ?? 'Loading...',
+            ),
+            SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select No. Passengers:',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                DropdownButton<String>(
+                  items: <String>['1', '2', '3', '4', '5', '6', '7', '8']
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  value: _noOfPassengers,
+                  onChanged: this.handleNoOfPassengerChange,
+                )
+              ],
             ),
             SizedBox(height: 20),
             TextValue(

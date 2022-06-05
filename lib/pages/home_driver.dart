@@ -26,6 +26,8 @@ class _HomeDriver extends State<HomeDriver> {
   var id;
   var routes;
   var passengers;
+  dynamic _occupied = 0;
+  dynamic _seats = 0;
 
   void getId() async {
     PrefService _pref = new PrefService();
@@ -69,6 +71,7 @@ class _HomeDriver extends State<HomeDriver> {
         },
       );
       this.passengers = jsonDecode(res.body);
+      this.showAvailableSeats();
       print(this.passengers);
       if (this.passengers?['status_id'] > 0) {
         if (this.passengers['status_id'] == 2) {
@@ -207,6 +210,19 @@ class _HomeDriver extends State<HomeDriver> {
     });
   }
 
+  void showAvailableSeats() {
+    if (this.passengers['data']?.length > 0) {
+      this._occupied = 0;
+      this._seats = 0;
+      for (var i = 0; i < this.passengers['data'].length; i++) {
+        setState(() {
+          _occupied += this.passengers['data'][i]['passengers'];
+          _seats = this.passengers['data'][i]?['number_of_seats'];
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     this.getToken();
@@ -218,6 +234,7 @@ class _HomeDriver extends State<HomeDriver> {
 
   @override
   Widget build(BuildContext context) {
+    print('Token: ${this.token}');
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -242,6 +259,8 @@ class _HomeDriver extends State<HomeDriver> {
                 handleDrive: this.handleDrive,
                 isDriving: this.isDriving,
                 handleRefresh: this.onRefresh,
+                seats: this._seats,
+                occupied: this._occupied,
               ),
             )
           : SchedulesButton(

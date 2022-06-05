@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:puv_tracker/widgets/passenger_card.dart';
 
 class Passengers extends StatefulWidget {
-  const Passengers(
-      {Key? key,
-      required this.passengers,
-      required this.dropButton,
-      required this.endTrip,
-      required this.handleDrive,
-      this.isDriving = false,
-      this.handleRefresh})
-      : super(key: key);
+  const Passengers({
+    Key? key,
+    required this.passengers,
+    required this.dropButton,
+    required this.endTrip,
+    required this.handleDrive,
+    this.isDriving = false,
+    this.handleRefresh,
+    this.seats,
+    this.occupied,
+  }) : super(key: key);
   final passengers;
   final dropButton;
   final endTrip;
   final handleDrive;
   final isDriving;
   final handleRefresh;
+  final seats;
+  final occupied;
   @override
   _PassengersState createState() => _PassengersState();
 }
@@ -37,14 +41,14 @@ class _PassengersState extends State<Passengers> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Text(
-                //   'Completed: 4/8',
-                //   style: TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 20.0,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
+                Text(
+                  'Completed: ${this.widget.occupied.toString()}/${this.widget.seats.toString()}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -128,6 +132,8 @@ class _PassengersState extends State<Passengers> {
                             .dropButton(widget.passengers?[index]['id'] ?? 0),
                         fullName:
                             widget.passengers[index]['full_name'].toString(),
+                        passengers:
+                            widget.passengers[index]['passengers'].toString(),
                         typeName:
                             widget.passengers[index]['type']?.toString() ??
                                 'Regular',

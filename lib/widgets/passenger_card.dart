@@ -9,6 +9,7 @@ class PassengerCard extends StatefulWidget {
     this.arrived,
     this.fee,
     this.statusId,
+    this.passengers,
     required this.onPress,
   }) : super(key: key);
 
@@ -19,6 +20,7 @@ class PassengerCard extends StatefulWidget {
   final arrived;
   final Function() onPress;
   final statusId;
+  final passengers;
 
   @override
   State<PassengerCard> createState() => _PassengerCardState();
@@ -55,6 +57,7 @@ class _PassengerCardState extends State<PassengerCard> {
                   ),
                 ),
                 Text(this.widget.typeName ?? 'loading...'),
+                Text('Occupied: ${this.widget.passengers.toString()}'),
                 Text('Location: ${this.widget.location ?? 'loading...'}'),
                 Text('Fee: ${this.widget.fee ?? 'loading...'}'),
                 this.widget.statusId == 2
