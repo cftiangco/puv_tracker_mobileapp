@@ -131,7 +131,7 @@ class _CheckInState extends State<CheckIn> {
               };
 
               try {
-                final res = await http.post(
+                await http.post(
                   Uri.parse('http://puvtrackingsystem.xyz/api/checkin'),
                   body: json.encode(payload),
                   headers: {

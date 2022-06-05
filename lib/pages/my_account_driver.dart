@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:puv_tracker/pages/change_password_driver.dart';
 import 'package:puv_tracker/pages/discount.dart';
-import 'package:puv_tracker/pages/top_up.dart';
 import 'package:puv_tracker/pages/update_information.dart';
 import 'package:puv_tracker/services/pref_service.dart';
 import 'package:puv_tracker/widgets/item_card.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'login.dart';
 
 class MyAccountDriver extends StatefulWidget {
   const MyAccountDriver({Key? key}) : super(key: key);

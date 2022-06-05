@@ -32,8 +32,8 @@ class _available_tripsState extends State<available_trips> {
             fare: this.widget.data[index]['fee'].toString(),
             destination:
                 '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
+            departure: this.widget.data[index]['departure'],
             arrive: this.widget.data[index]['arrival'],
-            departure: this.widget.data[index]['arrival'],
             onPress: () => this.widget.handleCheckIn(
                   this.widget.data[index]['schedule_id'],
                   '${this.widget.data[index]['location_from']} - ${this.widget.data[index]['location_to']}',
@@ -114,7 +114,7 @@ class TripCard extends StatelessWidget {
             height: 10,
           ),
           Text(
-            'Departure Time: ${this.arrive}',
+            'Departure Time: ${this.departure}',
             style: TextStyle(
               fontSize: 12.0,
             ),
