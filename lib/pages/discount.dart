@@ -49,6 +49,7 @@ class _DiscountState extends State<Discount> {
 
   @override
   Widget build(BuildContext context) {
+    print(this.token);
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Discount ID'),
@@ -90,7 +91,29 @@ class _DiscountState extends State<Discount> {
                       width: 10,
                     ),
                     Text(
-                      this.discount?['status'] ?? "No uploaded Discount",
+                      this.discount?['expiry_status'] ?? "No uploaded Discount",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Text('Expiry Date:'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      this.discount?['expiry'] ?? "No uploaded Discount",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
