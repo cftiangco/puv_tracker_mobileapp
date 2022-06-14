@@ -22,27 +22,26 @@ class _HomeDriver extends State<HomeDriver> {
   var isDriving = false;
 
   var token;
-  var fullName;
   var id;
   var routes;
   var passengers;
   dynamic _occupied = 0;
   dynamic _seats = 0;
 
-  void getId() async {
+  void getCache() async {
     PrefService _pref = new PrefService();
     this.id = await _pref.readId();
-    setState(() {
-      this.getData();
-      this.getPassengers();
-    });
-  }
-
-  void getToken() async {
-    PrefService _pref = new PrefService();
     token = await _pref.readToken();
     setState(() {});
+    this.getData();
+    this.getPassengers();
   }
+
+  // void getToken() async {
+  //   PrefService _pref = new PrefService();
+  //   token = await _pref.readToken();
+  //   setState(() {});
+  // }
 
   Future<void> getData() async {
     this.onRefresh();
@@ -72,7 +71,7 @@ class _HomeDriver extends State<HomeDriver> {
       );
       this.passengers = jsonDecode(res.body);
       this.showAvailableSeats();
-      print(this.passengers);
+      print("passengers: ${this.passengers}");
       if (this.passengers?['status_id'] > 0) {
         if (this.passengers['status_id'] == 2) {
           this.isDriving = true;
@@ -225,8 +224,7 @@ class _HomeDriver extends State<HomeDriver> {
 
   @override
   void initState() {
-    this.getToken();
-    this.getId();
+    this.getCache();
     this.getData();
     this.getPassengers();
     super.initState();
@@ -235,6 +233,7 @@ class _HomeDriver extends State<HomeDriver> {
   @override
   Widget build(BuildContext context) {
     print('Token: ${this.token}');
+    print('my id: ${this.id}');
     return Scaffold(
       appBar: AppBar(
         title: Row(

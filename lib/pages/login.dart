@@ -113,7 +113,7 @@ class _Login extends State<Login> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("/images/login-background.png"),
+            image: AssetImage("assets/images/login-background.png"),
             fit: BoxFit.cover,
             colorFilter: new ColorFilter.mode(
               Colors.black.withOpacity(0.5),
@@ -155,7 +155,8 @@ class _Login extends State<Login> {
                   ? Text(
                       'Incorrect username or password, Please try again',
                       style: TextStyle(
-                        color: Colors.red,
+                        color: Colors.yellowAccent,
+                        fontWeight: FontWeight.w600,
                       ),
                     )
                   : SizedBox(),

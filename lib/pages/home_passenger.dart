@@ -104,6 +104,8 @@ class _HomePassengerState extends State<HomePassenger> {
       );
       setState(() {
         this.locations = jsonDecode(res.body);
+        print(this.locations);
+        print("id: ${id}");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -247,6 +249,7 @@ class _HomePassengerState extends State<HomePassenger> {
 
   @override
   Widget build(BuildContext context) {
+    print('token: ${this.token}');
     return Scaffold(
       appBar: AppBar(
         title: Text('Passenger'),
@@ -259,7 +262,7 @@ class _HomePassengerState extends State<HomePassenger> {
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("/images/home-background.jpg"),
+                  image: AssetImage("assets/images/home-background.jpg"),
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(
                     Colors.black.withOpacity(0.8),
@@ -309,7 +312,8 @@ class _HomePassengerState extends State<HomePassenger> {
                     tripId: this.activeSession?['data']?['id'] ?? 0,
                     discount:
                         this.activeSession?['data']?['type'] ?? 'Loading..',
-                    status: this.activeSession?['data']?['status_id'] ?? 0,
+                    status:
+                        this.activeSession?['data']?['driver_status_id'] ?? 0,
                     passengers: this.activeSession?['data']?['passengers'] ?? 0,
                     handleCancel: this.handleCancel,
                     handleCompleted: this.handleCompleted,

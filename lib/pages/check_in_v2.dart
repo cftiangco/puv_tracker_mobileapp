@@ -124,7 +124,7 @@ class _CheckInV2State extends State<CheckInV2> {
       );
       setState(() {
         computation = jsonDecode(res.body)['data'];
-        print(computation);
+        print("Computation: ${computation}");
       });
     } catch (e) {
       print(e);
@@ -152,82 +152,84 @@ class _CheckInV2State extends State<CheckInV2> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            Center(
-              child: Text(
-                this.widget.destination ?? 'Loading...',
-                style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            SizedBox(height: 50),
-            TextValue(
-              label: 'Your current balance',
-              value: '₱${this.widget.currentBalance ?? 'Calculating..'}',
-            ),
-            SizedBox(height: 50),
-            TextValue(
-              label: 'Your location:',
-              value: this.widget.location ?? 'Loading...',
-            ),
-            SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select No. Passengers:',
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Center(
+                child: Text(
+                  this.widget.destination ?? 'Loading...',
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                DropdownButton<String>(
-                  items: <String>['1', '2', '3', '4', '5', '6', '7', '8']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+              ),
+              SizedBox(height: 50),
+              TextValue(
+                label: 'Your current balance',
+                value: '₱${this.widget.currentBalance ?? 'Calculating..'}',
+              ),
+              SizedBox(height: 50),
+              TextValue(
+                label: 'Your location:',
+                value: this.widget.location ?? 'Loading...',
+              ),
+              SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select No. Passengers:',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    items: <String>['1', '2', '3', '4', '5', '6', '7', '8']
+                        .map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                  value: _noOfPassengers,
-                  onChanged: this.handleNoOfPassengerChange,
-                )
-              ],
-            ),
-            SizedBox(height: 20),
-            TextValue(
-              label: 'Fare:',
-              value: '₱${this.widget.fare ?? '0'}',
-            ),
-            SizedBox(height: 20),
-            TextValue(
-              label: 'Discount:',
-              value: "- ₱${this.computation?['discount'] ?? 'Calculating..'}",
-            ),
-            SizedBox(height: 20),
-            Divider(
-              height: 10.0,
-            ),
-            TextValue(
-              label: 'Sub total:',
-              value: "₱${this.computation?['subTotal'] ?? 'Calculating..'}",
-            ),
-            SizedBox(height: 30),
-            PUVButton(
-              label: 'Check In',
-              onPress: this.handleCheckIn,
-            ),
-          ],
+                      );
+                    }).toList(),
+                    value: _noOfPassengers,
+                    onChanged: this.handleNoOfPassengerChange,
+                  )
+                ],
+              ),
+              SizedBox(height: 20),
+              TextValue(
+                label: 'Fare:',
+                value: '₱${this.widget.fare ?? '0'}',
+              ),
+              SizedBox(height: 20),
+              TextValue(
+                label: 'Discount:',
+                value: "- ₱${this.computation?['discount'] ?? 'Calculating..'}",
+              ),
+              SizedBox(height: 20),
+              Divider(
+                height: 10.0,
+              ),
+              TextValue(
+                label: 'Sub total:',
+                value: "₱${this.computation?['subTotal'] ?? 'Calculating..'}",
+              ),
+              SizedBox(height: 30),
+              PUVButton(
+                label: 'Check In',
+                onPress: this.handleCheckIn,
+              ),
+            ],
+          ),
         ),
       ),
     );

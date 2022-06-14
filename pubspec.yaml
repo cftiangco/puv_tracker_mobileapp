@@ -67,9 +67,9 @@ flutter:
   assets:
     - assets/images/student.png
     - assets/images/logo.png
-    - assets/gpay.json
     - assets/images/login-background.png
     - assets/images/home-background.jpg
+    - assets/gpay.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

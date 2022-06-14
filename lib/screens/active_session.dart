@@ -50,7 +50,7 @@ class _ActiveSessionState extends State<ActiveSession> {
         _passengerStatus = "On terminal";
         break;
       case 2:
-        _passengerStatus = "On the way to your destination";
+        _passengerStatus = "On the road";
         break;
       case 3:
         _passengerStatus = "Completed";
