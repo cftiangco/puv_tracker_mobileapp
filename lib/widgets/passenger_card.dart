@@ -29,6 +29,8 @@ class PassengerCard extends StatefulWidget {
 class _PassengerCardState extends State<PassengerCard> {
   @override
   Widget build(BuildContext context) {
+    print("type: ${this.widget.typeName}");
+
     return Card(
       child: Row(
         children: [
@@ -39,7 +41,9 @@ class _PassengerCardState extends State<PassengerCard> {
               width: 50,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/student.png'),
+                  image: AssetImage(this.widget.typeName == "Senior Citizen"
+                      ? 'assets/images/senior-logo.png'
+                      : 'assets/images/student-logo.png'),
                 ),
                 shape: BoxShape.circle,
               ),
